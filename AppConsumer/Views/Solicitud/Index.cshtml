@@ -1,0 +1,260 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Matrícula</h1>
+
+<div class="container">
+     <div class="row">
+        <select class="form-control" id="cboAlumno">
+            <option id="-1">Seleccionar Alumno</option>
+        </select>
+  </div>
+
+
+
+     <div style="height: 20px"></div>
+  <div class="row">
+
+
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Código Registrante</label>
+            <input type="text" class="form-control" id="txtCodigoRegistrante">
+      </div>
+
+      <div class="mb-3">
+        <label for="exampleInputEmail1" class="form-label">Carrera</label>
+            <input type="text" class="form-control" id="txtCarrera" />
+      </div>
+
+      <div class="mb-2">
+        <label for="exampleInputEmail1" class="form-label">Periodo</label>
+            <input type="text" class="form-control" id="txtPeriodo">
+      </div>
+  </div>
+
+  <div class="row">
+        <div class="mb-2">
+            <button class="btn btn-primary" id="btnMatricular">Iniciar Matrícula</button>
+        </div>
+  </div>
+  <hr />
+
+    <div class="row">
+
+
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Curso</label>
+            <select class="form-control" id="cboCurso">
+                
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Profesor</label>
+            <input type="text" class="form-control" id="txtProfesor" />
+        </div>
+
+        <div class="mb-2">
+            <label for="exampleInputEmail1" class="form-label">Aula</label>
+            <input type="text" class="form-control" id="txtAula">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Sede</label>
+            <input type="text" class="form-control" id="txtSede">
+        </div>
+        <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Observación</label>
+            <input type="text" class="form-control" id="txtObservacion">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="mb-2">
+            <button class="btn btn-secondary" id="btnMatricularCurso">Matricular Curso</button>
+        </div>
+    </div>
+
+     <div style="height: 20px"></div>
+        <div class="row">
+
+                <table class="table" id="tblDetalleSolicitud">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Curso</th>
+                      <th scope="col">Profesor</th>
+                      <th scope="col">Aula</th>
+                      <th scope="col">Sede</th>      
+                      <th scope="col">Observación</th>      
+                    </tr>
+                  </thead>
+                  <tbody>
+   
+                  </tbody>
+                </table>
+        </div>
+</div>
+
+
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+   $( document ).ready(function() {
+
+     _IdSolicitud = "";
+
+     getAllAlumnos();
+     getAllCursos() ;
+        dDetalleMatricula();
+    //getAllPersonas();
+
+
+           
+    function convertFecha(f){
+        var nueva =f.split("T")[0];
+        var format = nueva.split("-");
+        var fecha = format[2]+'-'+format[1] +'-'+format[0]
+        return fecha;
+    }
+
+    function getAllAlumnos() {
+
+        $.getJSON("/Alumno/GetAlumnos", function (alumnos) {
+           
+            $.map(alumnos, function (alumno) {
+               // console.log(alumno);
+                    $('#cboAlumno').append('<option value="' + alumno.idAlumno + '">' + alumno.nombres + '</option>');
+                  
+            });
+        });
+    }
+
+        $(document).ready(function () {
+           
+        });
+
+        function getAllCursos() {
+
+            $.getJSON("/Curso/GetCursos", function (cursos) {
+                
+                $.map(cursos, function (curso) {
+                   // console.log(curso);
+                    $('#cboCurso').append('<option value="' + curso.idCurso + '">' + curso.descripcion + '</option>');
+                });
+            });
+        }
+
+    
+        function eDetalleMatricula()
+        {
+            $("#cboCurso").prop("disabled", false);
+            $("#txtProfesor").prop("disabled", false);
+            $("#txtAula").prop("disabled", false);
+            $("#txtSede").prop("disabled", false);
+            $("#txtObservacion").prop("disabled", false);
+            $("#btnMatricularCurso").prop("disabled", false);
+        }
+
+        function dDetalleMatricula() {
+            $("#cboCurso").prop("disabled", true);
+            $("#txtProfesor").prop("disabled", true);
+            $("#txtAula").prop("disabled", true);
+            $("#txtSede").prop("disabled", true);
+            $("#txtObservacion").prop("disabled", true);
+            $("#btnMatricularCurso").prop("disabled", true);
+        }
+
+  
+
+        $("#btnMatricular").click(function () {
+
+            var oSolicitud = {
+                idAlumno: $("#cboAlumno option:selected").val(),
+                FechaSolicitud: $("#txtBuscar").val(),
+                CodRegistrante: $("#txtCodigoRegistrante").val(),
+                Carrera: $("#txtCarrera").val(),
+                Periodo: $("#txtPeriodo").val()
+            };
+
+            $.post("/Solicitud/InsertSolicitud", oSolicitud)
+                .done(function (solicitud) {
+                    console.log(solicitud);
+
+                    if(!solicitud.error){
+                        console.log("Grabado exitoso");
+                        _IdSolicitud = solicitud.idSolicitud;
+                        toastr.success('Registro exitoso!', 'Matricula');
+                        eDetalleMatricula();
+                    } else{
+                        toastr.error(solicitud.error, 'Matricula');
+                         dDetalleMatricula();
+                    }
+
+                    
+                })
+                .fail(function (e) {
+                    console.log(e);
+                    toastr.error('Error!', 'Matricula');
+                    dDetalleMatricula();
+                })
+                .always(function () {
+                    eDetalleMatricula();
+                    console.log("Finalizado");
+                });
+
+        });
+
+        $("#btnMatricularCurso").click(function () {
+
+            var oSolicitud = {
+                IdCurso: $("#cboCurso option:selected").val(),
+                IdSolicitud: _IdSolicitud,
+                Profesor: $("#txtProfesor").val(),
+                Aula: $("#txtAula").val(),
+                Sede: $("#txtSede").val(),
+                Observacion: $("#txtObservacion").val()
+            };
+
+            $.post("/DetalleSolicitud/InsertSolicitud", oSolicitud)
+                .done(function (solicitud) {
+                    console.log(solicitud);
+
+                    if (!solicitud.error) {
+                        console.log("Grabado exitoso");
+                        toastr.success('Curso matriculado con éxito!', 'Matricula');
+                        $("#tblDetalleSolicitud tbody").append("<tr>"
+                            + "<td>" + solicitud.idDetalleSol + "</td>"
+                            + "<td>" + $("#cboCurso option:selected").text() + "</td>"
+                            + "<td>" + solicitud.profesor + "</td>"
+                            + "<td>" + solicitud.aula + "</td>"
+                            + "<td>" + solicitud.sede + "</td>"
+                            + "<td>" + solicitud.observacion + "</td>"
+                           
+                            + "</tr>"
+                        );
+                    } else {
+                        toastr.error(solicitud.error, 'Matricula');
+                    }
+
+
+                })
+                .fail(function (e) {
+                    console.log(e);
+                    toastr.error('Error!', 'Matricula');
+                })
+                .always(function () {
+                    console.log("Finalizado");
+                });
+
+        });
+
+
+        
+
+
+    });
+</script>

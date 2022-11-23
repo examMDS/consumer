@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\WebAPI\WebAPI\Models\Alumno.cs" Link="Models\Alumno.cs" />
+    <Compile Include="..\..\WebAPI\WebAPI\Models\Cursos.cs" Link="Models\Cursos.cs" />
+    <Compile Include="..\..\WebAPI\WebAPI\Models\DetalleSolicitud.cs" Link="Models\DetalleSolicitud.cs" />
+    <Compile Include="..\..\WebAPI\WebAPI\Models\Solicitud.cs" Link="Models\Solicitud.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+</Project>

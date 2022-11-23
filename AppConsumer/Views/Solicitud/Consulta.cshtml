@@ -1,0 +1,307 @@
+﻿@{
+    ViewData["Title"] = "Consulta Matrícula";
+}
+
+<h1>Consulta Matrícula</h1>
+<div style="height: 5px"></div>
+
+<ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="pills-periodo-tab" data-toggle="pill" data-target="#pills-periodo" type="button" role="tab" aria-controls="pills-periodo" aria-selected="true">Periodo</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-fecha-tab" data-toggle="pill" data-target="#pills-fecha" type="button" role="tab" aria-controls="pills-fecha" aria-selected="false">Fecha</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-alumno-tab" data-toggle="pill" data-target="#pills-alumno" type="button" role="tab" aria-controls="pills-alumno" aria-selected="false">Alumno</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link" id="pills-curso-tab" data-toggle="pill" data-target="#pills-curso" type="button" role="tab" aria-controls="pills-curso" aria-selected="false">Curso</button>
+    </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+
+    <div class="tab-pane fade show active" id="pills-periodo" role="tabpanel" aria-labelledby="pills-periodo-tab">
+        
+        <form class="form-inline">
+           
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="txtPeriodo" class="sr-only">Periodo</label>
+                <input type="text" class="form-control" id="txtPeriodo" placeholder="Buscar por Periodo">
+            </div>
+            <button type="button" class="btn btn-primary mb-2" id="btnBuscarPeriodo">Buscar</button>
+        </form>
+
+    </div>
+
+    <div class="tab-pane fade" id="pills-fecha" role="tabpanel" aria-labelledby="pills-fecha-tab">
+
+         <form class="form-inline">
+           
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="txtPeriodo" class="sr-only">Fecha</label>
+                <input type="text" class="form-control" id="txtFecha" placeholder="YYYY-MM-DD">
+            </div>
+            <button type="button" class="btn btn-primary mb-2" id="btnBuscarFecha">Buscar</button>
+        </form>
+
+    </div>
+
+    <div class="tab-pane fade" id="pills-alumno" role="tabpanel" aria-labelledby="pills-alumno-tab">
+
+        <form class="form-inline">
+
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="txtPeriodo" class="sr-only">Fecha</label>
+                <input type="text" class="form-control" id="txtAlumno" placeholder="Buscar por Alumno">
+            </div>
+            <button type="button" class="btn btn-primary mb-2" id="btnBuscarAlumno">Buscar</button>
+        </form>
+
+    </div>
+
+    <div class="tab-pane fade" id="pills-curso" role="tabpanel" aria-labelledby="pills-curso-tab">
+
+        <form class="form-inline">
+
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="txtPeriodo" class="sr-only">Fecha</label>
+                <input type="text" class="form-control" id="txtCurso" placeholder="Buscar por Curso">
+            </div>
+            <button type="button" class="btn btn-primary mb-2" id="btnBuscarCurso">Buscar</button>
+        </form>
+
+    </div>
+</div>
+
+<div class="container">
+    <div style="height: 20px"></div>
+
+@*    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+       Ver Detalle
+    </button>*@
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" aria-labelledby="exampleModalCenterTitle" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Detalle Matrícula</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <table class="table" id="tblDetalleSolicitud">
+                          <thead>
+                            <tr>
+                              <th scope="col">Curso</th>
+                              <th scope="col">Profesor</th>
+                              <th scope="col">Aula</th>
+                              <th scope="col">Sede</th>      
+                              <th scope="col">Observación</th>      
+                            </tr>
+                          </thead>
+                          <tbody>
+   
+                          </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+
+        <table class="table" id="tblSolicitud">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Alumno</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Código</th>
+                    <th scope="col">Carrera</th>
+                    <th scope="col">Periodo</th>
+                    <th scope="col">Detalle</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    function ShowModal(idSolicitud) {
+        var _id = idSolicitud;
+        console.log("idSolicitud: " + _id);
+
+        var params = {
+            idSolicitud : _id
+        };
+
+        console.log(params);
+
+
+        $.getJSON("/DetalleSolicitud/GetDetalleSolicitudBySolicitud", params, function (solicitudes) {
+            $("#tblDetalleSolicitud tbody tr").remove();
+            $.map(solicitudes, function (solicitud) {
+
+                $("#tblDetalleSolicitud tbody").append("<tr>"
+                    + "<td>" + solicitud.cursos.descripcion + "</td>"
+                    + "<td>" + solicitud.profesor + "</td>"
+                    + "<td>" + solicitud.aula + "</td>"
+                    + "<td>" + solicitud.sede + "</td>"
+                    + "<td>" + solicitud.observacion + "</td>"
+                    + "</tr>"
+                );
+            });
+
+        });
+
+
+        $('#exampleModalCenter').modal('show')
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        
+
+        _IdSolicitud = "";
+
+        function convertFecha(f) {
+            var nueva = f.split("T")[0];
+            var format = nueva.split("-");
+            var fecha = format[2] + '-' + format[1] + '-' + format[0]
+            return fecha;
+        }
+
+        function PintarMaestro(solicitudes)
+        {
+            $("#tblSolicitud tbody tr").remove();
+            $.map(solicitudes, function (solicitud) {
+
+                _IdSolicitud = solicitud.idSolicitud;
+
+                $("#tblSolicitud tbody").append("<tr>"
+                    + "<td>" + solicitud.idAlumno + "</td>"
+                    + "<td>" + solicitud.alumno.nombres + "  " + solicitud.alumno.apellidos + "</td>"
+                    + "<td>" + convertFecha(solicitud.fechaSolicitud) + "</td>"
+                    + "<td>" + solicitud.codRegistrante + "</td>"
+                    + "<td>" + solicitud.carrera + "</td>"
+                    + "<td>" + solicitud.periodo + "</td>"
+                    //+ "< button type = 'button' class= 'btn btn-primary btn-sm' data-toggle='modal' data-target='#exampleModalCenter' id='btnVerDetalle' onclick='store(" + solicitud.idSolicitud + ")' > Ver Detalle < /button>"
+                    + "<td><button type = 'button' class= 'btn btn-primary btn-sm' id='btnVerDetalle' onclick='ShowModal(" + solicitud.idSolicitud + ")'> Ver Detalle </button><td>"
+                    + "</tr>"
+                );
+            });
+        }
+
+        $("#btnBuscarPeriodo").click(function () {
+
+
+            var params = {
+                periodo: $("#txtPeriodo").val()
+            };
+
+            console.log(params);
+
+
+            $.getJSON("/Solicitud/GetSolicitudByPeriodo", params, function (solicitudes) {
+             
+                PintarMaestro(solicitudes)
+
+            });
+
+            console.log("Ok");
+
+        });
+
+        $("#btnBuscarFecha").click(function () {
+
+       var params = {
+                fecha: $("#txtFecha").val()
+            };
+
+            console.log(params);
+
+
+            $.getJSON("/Solicitud/GetSolicitudByFecha", params, function (solicitudes) {
+
+                PintarMaestro(solicitudes)
+
+            });
+
+            console.log("Ok");
+
+        });
+
+        $("#btnBuscarAlumno").click(function () {
+
+            var txtAlumno = $("#txtAlumno").val();
+
+            if ($.isNumeric(txtAlumno)) {
+             
+                var params = {
+                    id: txtAlumno
+                };
+
+                $.getJSON("/Solicitud/GetSolicitudByIdAlumno", params, function (solicitudes) {
+
+                    PintarMaestro(solicitudes)
+
+                });  
+
+            } else 
+            {
+             
+                var params = {
+                    nombres: txtAlumno
+                };
+
+                $.getJSON("/Solicitud/GetSolicitudByAlumno", params, function (solicitudes) {
+
+                    PintarMaestro(solicitudes)
+
+                });
+            }
+
+            
+
+            console.log(params);
+
+        });
+
+        $("#btnBuscarCurso").click(function () {
+
+            var params = {
+                curso: $("#txtCurso").val()
+            };
+
+            console.log(params);
+
+
+            $.getJSON("/Solicitud/GetSolicitudByCurso", params, function (solicitudes) {
+
+                PintarMaestro(solicitudes)
+
+            });
+
+            console.log("Ok");
+
+        });
+
+
+    });
+</script>
